@@ -1,4 +1,4 @@
-package memoryManage.com.page;
+package memoryManage.com.segment_page;
 
 /**
  * 模拟内存类
@@ -14,7 +14,7 @@ public class Memory {
 	public Memory(int frameNum) {
 		memory = new Frame[frameNum];
 		for(int i = 0; i < frameNum; i++) {
-			memory[i] = new Frame(i, i * OS.pageSize);
+			memory[i] = new Frame(i, i * Settings.pageSize);
 		}
 		unusedFrameCount = frameNum;
 	}
@@ -31,7 +31,7 @@ public class Memory {
 		int[] result = new int[n];
 		int index = 0;
 		for(int i = 0; index < n && i < memory.length; i++) {
-			if(memory[i].used == false) {
+			if(!memory[i].used) {
 				result[index] = memory[i].frameNum;
 				memory[i].setUsed(id);
 				index++;
@@ -45,8 +45,8 @@ public class Memory {
 	 * 释放页框号为frames的所有页框
 	 */
 	public void freeFrame(int[] frames) {
-		for(int i = 0; i < frames.length; i++) {
-			memory[frames[i]].setUnused();
+		for (int frame : frames) {
+			memory[frame].setUnused();
 		}
 		unusedFrameCount += frames.length;
 	}

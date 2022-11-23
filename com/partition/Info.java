@@ -1,4 +1,4 @@
-package memoryManage.com;
+package memoryManage.com.partition;
 
 public class Info {
     public static final String PART_OPERATION_MENU =

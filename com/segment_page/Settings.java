@@ -1,9 +1,10 @@
-package memoryManage.com.page;
+package memoryManage.com.segment_page;
+
 
 import java.util.Map;
 import java.util.HashMap;
 
-public class OS {
+public class Settings {
 	public static final int memorySize = 64 * 1024;		// 内存大小
 	public static final int pageSize = 1 * 1024;		// 页大小，为了简化地址转换，为2的幂
 	public static final int maxSegmentNum = 4;			// 一个程序最多有多少个段
@@ -16,7 +17,7 @@ public class OS {
 	private Map<String, PCB> processes = new HashMap<>();
 	private Memory memory = new Memory(memorySize / pageSize);
 	
-	public OS() {
+	public Settings() {
 		PCB.setMemory(memory);
 	}
 	
@@ -43,7 +44,7 @@ public class OS {
 		process.initLoad();
 		
 		System.out.println("创建进程 " + id + " 成功");
-		return true;   
+		return true;
 	}
 	
 	/**
@@ -54,11 +55,11 @@ public class OS {
 			return "进程名重复";
 		}
 		if(segments.length == 0 || segments.length > 4) {
-			return "一个进程只能有1 到 " + OS.maxSegmentNum + " 个段";
+			return "一个进程只能有1 到 " + Settings.maxSegmentNum + " 个段";
 		}
 		for(int i = 0; i < segments.length; i++) {
-			if(segments[i] <= 0 || segments[i] > OS.maxSegmentSize) {
-				return "一个段必须小于 " + OS.maxSegmentSize + "KB";
+			if(segments[i] <= 0 || segments[i] > Settings.maxSegmentSize) {
+				return "一个段必须小于 " + Settings.maxSegmentSize + "KB";
 			}
 		}
 		
@@ -105,8 +106,8 @@ public class OS {
 		}
 		
 		// 根据segmentOffset计算页号和页偏移
-		int pageNum = segmentOffset / OS.pageSize;
-		int pageOffset = segmentOffset % OS.pageSize;
+		int pageNum = segmentOffset / Settings.pageSize;
+		int pageOffset = segmentOffset % Settings.pageSize;
 		
 		PageEntry page = segment.PTable[pageNum];
 		if(page.load == false) {	
@@ -126,8 +127,8 @@ public class OS {
 	/**
 	 * 设置默认置换策略
 	 */
-	public static void setReplacePolicy(OS.REPLACE_POLICY policy) {
-		OS.ReplacePolicy = policy;
+	public static void setReplacePolicy(Settings.REPLACE_POLICY policy) {
+		Settings.ReplacePolicy = policy;
 	}
 	
 	/**

@@ -1,4 +1,4 @@
-package memoryManage.com.page;
+package memoryManage.com.segment_page;
 
 /**
  * 页框类

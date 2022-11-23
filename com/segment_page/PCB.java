@@ -1,17 +1,19 @@
-package memoryManage.com.page;
+package memoryManage.com.segment_page;
+
+import memoryManage.com.Process;
 
 import java.util.Queue;
 import java.util.LinkedList;
 
-public class PCB {
+public class PCB extends Process {
 	
 	private static Memory memory =  null;
 	
-	public String id;
+
 	public SegmentEntry[] STable;
 	public int residentSetCount;			// 驻留集页个数
 	public int[] residentSet;				// 驻留集页框号
-	public OS.REPLACE_POLICY policy;		// 替换策略
+	public Settings.REPLACE_POLICY policy;		// 替换策略
 	
 	// 页载入内存的顺序。其中Integer数组元素分别为段号、页号
 	// 用于实现替换策略的 FIFO
@@ -19,8 +21,8 @@ public class PCB {
 	public Queue<Integer[]> loadQueue = new LinkedList<>();	
 	
 	
-	public PCB(String id, int[] segments, OS.REPLACE_POLICY policy) {
-		this.id = id;
+	public PCB(String id, int[] segments, Settings.REPLACE_POLICY policy) {
+		super(id);
 		this.policy = policy;
 		STable = new SegmentEntry[segments.length];
 		for(int i = 0; i < STable.length; i++) {
@@ -32,8 +34,8 @@ public class PCB {
 		for(int i = 0; i < STable.length; i++) {
 			residentSetCount += STable[i].PTable.length;
 		}
-		if(residentSetCount > OS.maxResidentSetNum) {
-			residentSetCount = OS.maxResidentSetNum;
+		if(residentSetCount > Settings.maxResidentSetNum) {
+			residentSetCount = Settings.maxResidentSetNum;
 		}
 	}
 	
@@ -99,7 +101,7 @@ public class PCB {
 	 */
 	public void replacePage(int inSN, int inPN) {
 		Integer[] something;
-		if(policy == OS.REPLACE_POLICY.FIFO) {
+		if(policy == Settings.REPLACE_POLICY.FIFO) {
 			something = selectReplacePage_FIFO();
 		} else {
 			something = selectReplacePage_LRU();
@@ -119,62 +121,3 @@ public class PCB {
 	}
 }
 
-/* Segment Table Entry */
-class SegmentEntry {
-	public int segmentNum = -1;			// 段号
-	public int segmentSize = -1;		// 段大小
-	public PageEntry[] PTable = null;			// 对应的页表
-	
-	public SegmentEntry(int segmentNum, int segmentSize) {
-		this.segmentNum = segmentNum;
-		this.segmentSize = segmentSize;
-		
-		int count = segmentSize / OS.pageSize;	// 页表的大小
-		if(segmentSize % OS.pageSize != 0) {
-			count++;
-		}
-		PTable = new PageEntry[count];
-		for(int i = 0; i < count; i++) {
-			PTable[i] = new PageEntry(i);
-		}
-	}
-}
-
-/* Page Table Entry */
-class PageEntry {
-	public int pageNum;					// 页号
-	public boolean load;				// 该页是否载入
-	public int frameNum;				// 该页载入的页框号。如果load为false，则该字段无意义
-	/**
-	 * 该页最近一次被访问的时间。如果load为false，则此字段无意义。
-	 * 该字段用于实现页面置换策略LRU，当该页被载入内存或被访问时，重置该时间
-	 */
-	public long usedTime;				
-	public String info = "";			// 其他信息，如设置保护、共享等
-	
-	/**
-	 * 创建一个指定页号、未载入的页
-	 */
-	public PageEntry(int pageNum) {
-		this.pageNum = pageNum;
-		setUnload();
-	}
-	
-	/**
-	 * 设置该页载入到页框号为frameNum的页框中
-	 */
-	public void setLoad(int frameNum) {
-		this.load = true;
-		this.frameNum = frameNum;
-		usedTime = System.currentTimeMillis();
-	}
-	
-	/**
-	 * 将该页载出内存
-	 */
-	public void setUnload() {
-		this.load = false;
-		this.frameNum = -1;
-		usedTime = -1;
-	}
-}

@@ -1,15 +1,16 @@
 package memoryManage.com.partition;
 
-import memoryManage.com.Info;
 import memoryManage.com.Process;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
 
+/**
+ * @author 28597
+ */
 public class DynamicPart {
 
     // 使用Partition数组来表示空闲分区队列和内存总的分区队列
@@ -35,15 +36,11 @@ public class DynamicPart {
         }
     };
 
+
     public DynamicPart() {
         memoryList = new ArrayList<>();
         emptyList = new ArrayList<>();
-    }
-
-    public DynamicPart(HashMap<String, Process> requestList) {
-        memoryList = new ArrayList<>();
-        emptyList = new ArrayList<>();
-        this.requestList = requestList;
+        this.requestList = new HashMap<>();
     }
 
     public void init(String filename) {
@@ -77,60 +74,6 @@ public class DynamicPart {
         }
         showEmpty();
         showMem();
-    }
-
-    public void run() {
-        Scanner input = new Scanner(System.in);
-        int command = -1;
-        String ids;
-        while (command != 0) {
-            System.out.println();
-            System.out.println("输入任意字符继续");
-            input.nextLine();
-            System.out.println(Info.PART_OPERATION_MENU);
-            command = Integer.parseInt(input.nextLine());
-            switch (command) {
-                case 0:
-                    break;
-                case 1:
-                    //执行一个进程
-                    outReady();
-                    System.out.print("需要执行的进程名:");
-                    ids = input.nextLine();
-                    executeProcesses(ids.split(" "));
-                    break;
-                case 2:
-                    //结束一个进程
-                    //可结束的进程
-                    outRunning();
-                    System.out.print("需要结束的进程名:");
-                    ids=input.nextLine();
-                    endProcesses(ids.split(" "));
-                    break;
-                case 3:
-                    //添加一个进程
-                    System.out.print("进程名:");
-                    String name = input.nextLine();
-                    if (requestList.containsKey(name)) {
-                        System.out.println("进程名重复，添加失败");
-                    } else {
-                        System.out.print("进程大小:");
-                        requestList.put(name, new Process(name, input.nextInt()));
-                    }
-                    break;
-
-                case 4:
-                    //查看空闲区
-                    showEmpty();
-                    break;
-                case 5:
-                    //查看内存
-                    showMem();
-                    break;
-                default:
-                    System.out.println("无该指令，请重新输入");
-            }
-        }
     }
 
 
@@ -235,6 +178,7 @@ public class DynamicPart {
             }
         }
     }
+
     public void outReady(){
         System.out.println("可选择的进程如下:");
         int i = 1;
@@ -254,6 +198,15 @@ public class DynamicPart {
             }
         }
     }
+
+    public void addProcess(String name,Integer size){
+        if (requestList.containsKey(name)) {
+            System.out.println("进程名重复，添加失败");
+        } else {
+            System.out.println("添加成功");
+            requestList.put(name, new Process(name, size));
+        }
+    }
     public void showMem() {
         memoryList.sort(compStartAsc);
         System.out.println("内存情况");
@@ -269,6 +222,37 @@ public class DynamicPart {
             System.out.println(part);
         }
     }
+
+    public void input() {
+        Scanner input = new Scanner(System.in);
+        System.out.print("请输入进程数：");
+        int amount = input.nextInt();
+        for (int i = 0; i < amount; i++) {
+
+            System.out.print("请输入进程名：");
+            String str1 = input.next();
+            System.out.print("请输入进程大小：");
+            int size = input.nextInt();
+            requestList.put(str1, new Process(str1, size));
+        }
+    }
+
+    public void readFile(String filename) {
+
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(filename));
+            int amount = Integer.parseInt(bufferedReader.readLine());
+            for (int i = 0; i < amount; i++) {
+                String str = bufferedReader.readLine();
+                String[] strs = str.split(" ");
+                requestList.put(strs[0], new Process(strs[0], Integer.parseInt(strs[1])));
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
 
     public ArrayList<Partition> getEmptyList() {
         return emptyList;
