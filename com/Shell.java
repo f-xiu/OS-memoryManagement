@@ -4,8 +4,6 @@ import memoryManage.com.partition.DynamicPart;
 import memoryManage.com.partition.Info;
 import memoryManage.com.segment_page.Settings;
 
-import java.util.Scanner;
-
 public class Shell {
     public static final String helpMess =
             "create process 进程id 各个段大小\t创建一个进程\n" +

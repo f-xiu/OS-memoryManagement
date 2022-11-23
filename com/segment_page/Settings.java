@@ -168,9 +168,9 @@ public class Settings {
 		} else {
 			sb.append("LRU\n\n");
 		}
-		
+		System.out.println(sb.toString());
 		for(SegmentEntry segment : process.STable) {
-			sb.append("进程" + id + " 段号:" + segment.segmentNum + " 段大小:" + segment.segmentSize + "\n");
+			sb.append("进程" + id + " 段号:" + segment.segmentNum + " 段大小:" + segment.segmentSize+"\n");
 			sb.append("-----------------------------------------------------------------\n");
 			sb.append("| 页号\t| 是否载入\t| 页框号\t| 页框起始地址\t| 上一次访问时间\t|\n");
 			sb.append("-----------------------------------------------------------------\n");
@@ -184,7 +184,6 @@ public class Settings {
 			}
 			sb.append("-----------------------------------------------------------------\n\n");
 		}
-		
-		System.out.print(sb.toString());
+		System.out.println(sb.toString());
 	}
 }
