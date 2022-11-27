@@ -13,6 +13,7 @@ import java.util.*;
  */
 public class DynamicPart {
 
+
     // 使用Partition数组来表示空闲分区队列和内存总的分区队列
     protected ArrayList<Partition> emptyList, memoryList;
     protected HashMap<String, Process> requestList;

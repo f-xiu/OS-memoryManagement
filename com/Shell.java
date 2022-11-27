@@ -249,18 +249,10 @@ public class Shell {
      * 打印一些必要信息
      */
     public static void printMessage() {
-        String version = "1.0";
-
-        System.out.println("Memory Management [version " + version + "]");
-        System.out.println("Author: tom");
-        System.out.println();
         System.out.println("内存大小64K，页框大小为1K，一个进程最多有4个段，且每个段最大为16K。一个进程驻留集最多为8页。");
-        System.out.println("驻留集置换策略：局部策略（仅在进程的驻留集中选择一页）");
+        System.out.println("固定分配局部置换");
         System.out.println("页面淘汰策略：FIFO、LRU");
-        System.out.println("进程初始载入策略：从第0个、第1个段...依次载入页，直到驻留集已全部载入");
-        System.out.println("放置策略：决定一个进程驻留集存放在内存什么地方。优先放在低页框");
         System.out.println();
-
     }
 
 }

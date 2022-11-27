@@ -110,9 +110,9 @@ public class Settings {
 		int pageOffset = segmentOffset % Settings.pageSize;
 		
 		PageEntry page = segment.PTable[pageNum];
-		if(page.load == false) {	
+		if(!page.load) {
 			// 如果该页不在内存中，根据淘汰策略淘汰一个页面，并将该页载入
-			System.out.println("请求的页不再内存中，发生缺页中断");
+			System.out.println("请求的页不在内存中，发生缺页中断");
 			process.replacePage(segmentNum, pageNum);
 		}
 		
@@ -157,6 +157,18 @@ public class Settings {
 			sb.append(elem + " ");
 		}
 		sb.append("]\n");
+		sb.append("载入的段页(段号:[页号]): ");
+		for(int i=0;i<process.STable.length;i++){
+			sb.append("段"+i+":[ ");
+			for(int j=0;j<process.STable[i].PTable.length;j++){
+				if(process.STable[i].PTable[j].load){
+					sb.append(j+" ");
+				}
+			}
+			sb.append("] ");
+		}
+		sb.append("\n");
+
 		sb.append("置换策略：");
 		if(process.policy == REPLACE_POLICY.FIFO) {
 			sb.append("FIFO ");
@@ -168,7 +180,6 @@ public class Settings {
 		} else {
 			sb.append("LRU\n\n");
 		}
-		System.out.println(sb.toString());
 		for(SegmentEntry segment : process.STable) {
 			sb.append("进程" + id + " 段号:" + segment.segmentNum + " 段大小:" + segment.segmentSize+"\n");
 			sb.append("-----------------------------------------------------------------\n");

@@ -2,8 +2,8 @@ package memoryManage.com.segment_page;
 
 import memoryManage.com.Process;
 
-import java.util.Queue;
 import java.util.LinkedList;
+import java.util.Queue;
 
 public class PCB extends Process {
 	
@@ -18,7 +18,7 @@ public class PCB extends Process {
 	// 页载入内存的顺序。其中Integer数组元素分别为段号、页号
 	// 用于实现替换策略的 FIFO
 	// 重要：每当页载入内存时更新队列
-	public Queue<Integer[]> loadQueue = new LinkedList<>();	
+	public Queue<Integer[]> loadQueue = new LinkedList<>();
 	
 	
 	public PCB(String id, int[] segments, Settings.REPLACE_POLICY policy) {
