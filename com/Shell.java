@@ -2,7 +2,10 @@ package memoryManage.com;
 
 import memoryManage.com.partition.DynamicPart;
 import memoryManage.com.partition.Info;
+import memoryManage.com.segment.SegmentManagement;
 import memoryManage.com.segment_page.Settings;
+
+import java.util.Objects;
 
 public class Shell {
     public static final String helpMess =
@@ -17,12 +20,14 @@ public class Shell {
     public static Settings settings;
 
     public static void main(String[] args) {
-        System.out.println("选择内存管理方案:\n1.动态分区管理\n2.段页式内存管理");
+        System.out.println("选择内存管理方案:\n1.动态分区管理\n2.段式内存管理\n3.段页式内存管理");
         System.out.print(">>> ");
         int command = Integer.parseInt(Input.nextLine());
         if (command == 1) {
             partitionShell();
         } else if (command == 2) {
+            segmentShell();
+        } else if (command == 3) {
             printMessage();
             setReplacePolicy();
             System.out.println("输入help获取更多帮助信息");
@@ -41,6 +46,15 @@ public class Shell {
      * 7.help or h
      * 8.quit or q
      */
+
+    /*
+     *create process pname segments
+     *destroy process pname
+     *address pname segment offset
+     *show memory
+     *hlep
+     *  */
+
 
     /**
      * 1. create process pname segments
@@ -87,8 +101,7 @@ public class Shell {
                             test1.executeProcesses(strs);
                         } else if ("destroy".equals(words[0]) && "process".equals(words[1])) {
                             test1.endProcesses(strs);
-                        }
-                        else {
+                        } else {
                             throw new Exception();
                         }
                     }
@@ -107,8 +120,7 @@ public class Shell {
                             default:
                                 break;
                         }
-                    }
-                    else {
+                    } else {
                         throw new Exception();
                     }
                 } else if (words.length == 1) {
@@ -135,6 +147,77 @@ public class Shell {
             }
             System.out.print(">>> ");
         }
+    }
+
+
+    public static void segmentShell() {
+        SegmentManagement segmentManagement = new SegmentManagement();
+        System.out.print(">>> ");
+        while (true) {
+            String command = Input.nextLine();
+            if (command == null || "".equals(command.trim())) {
+                System.out.print(">>> ");
+                continue;
+            }
+
+
+            String[] words = command.split(" ");
+
+            try {
+                if (words.length >= 3) {
+                    if ("create".equals(words[0]) && "process".equals(words[1])) {
+                        String[] strs = new String[words.length - 3];
+                        System.arraycopy(words, 3, strs, 0, words.length - 3);
+
+                        segmentManagement.createProcess(words[2], strs);
+                    } else if ("destroy".equals(words[0]) && "process".equals(words[1])) {
+                        String[] strs = new String[words.length - 2];
+                        System.arraycopy(words, 2, strs, 0, words.length - 2);
+
+                        segmentManagement.endProcesses(strs);
+                    } else if ("address".equals(words[0])) {
+                        if (words.length != 4) {
+                            throw new Exception();
+                        } else {
+                            segmentManagement.readAddress(words[1], Integer.parseInt(words[2]), Integer.parseInt(words[3]));
+                        }
+                    } else if ("show".equals(words[0]) && "process".equals(words[1])) {
+                        segmentManagement.showProcess(words[2]);
+                    } else {
+                        throw new Exception();
+                    }
+                } else if (words.length == 2) {
+                    if ("show".equals(words[0]) && "memory".equals(words[1])) {
+                        System.out.println("段\t开始地址\t长度\t状态\t");
+                        segmentManagement.showMem();
+                    } else if ("show".equals(words[0]) && "empty".equals(words[1])) {
+                        segmentManagement.showEmpty();
+                    } else {
+                        throw new Exception();
+                    }
+                } else if (words.length == 1) {
+                    if ("help".equals(words[0]) || "h".equals(words[0])) {
+                        System.out.println(
+                                "create process pname segments\n" +
+                                        "destroy process pname1 pname2.. \n" +
+                                        "address pname segment offset\n" +
+                                        "show memory\n" +
+                                        "hlep");
+                    } else if ("quit".equals(words[0]) || "q".equals(words[0])) {
+                        break;
+                    } else {
+                        throw new Exception();
+                    }
+                } else {
+                    throw new Exception();
+                }
+            } catch (Exception e) {
+                System.out.println("命令有误(help获取帮助)");
+
+            }
+            System.out.print(">>> ");
+        }
+
     }
 
     public static void segPageShell() {
